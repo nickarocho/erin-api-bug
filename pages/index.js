@@ -1,5 +1,4 @@
 import Head from "next/head";
-import Image from "next/image";
 import styles from "../styles/Home.module.css";
 
 import Amplify, { API, Auth } from "aws-amplify";
@@ -100,16 +99,13 @@ export default function Home() {
 
       let { items } = filteredResult.data.listArtists;
 
+      // adds a styled background to matches on the listed artists
       if (items.length) {
-        console.log("yes");
         items = items.map((item) => item.name);
         setSearchResults(items);
       } else {
         setSearchResults([]);
       }
-
-      const test = searchResults.includes(artist.name);
-      console.log({ test, searchResults });
     } catch (err) {
       console.error("findArtist error: ", err);
     }
