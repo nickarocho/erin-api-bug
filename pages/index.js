@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 Amplify.configure(config);
 
 export default function Home() {
+  const [currentUser, setCurrentUser] = useState(null);
   const [username, setUsername] = useState("");
   const [code, setCode] = useState("");
   const [artist, setArtist] = useState("");
@@ -20,40 +21,8 @@ export default function Home() {
 
   useEffect(() => {
     fetchArtists();
+    fetchUser();
   }, []);
-
-  const signUp = async () => {
-    try {
-      const { user } = await Auth.signUp({
-        username,
-        password: "password",
-        attributes: {
-          email: `nicaroch+${Math.ceil(Math.random() * 1000)}@amazon.com`,
-          phone_number: "+16024108498", // optional - E.164 number convention
-        },
-      });
-      console.log({ user });
-    } catch (error) {
-      console.log("error signing up:", error);
-    }
-  };
-
-  const signIn = async () => {
-    try {
-      const user = await Auth.signIn(username, "password");
-      console.log({ user });
-    } catch (error) {
-      console.log("error signing in", error);
-    }
-  };
-
-  const confirmSignUp = async () => {
-    try {
-      await Auth.confirmSignUp(username, code);
-    } catch (error) {
-      console.log("error confirming sign up", error);
-    }
-  };
 
   const fetchArtists = async () => {
     try {
@@ -74,7 +43,10 @@ export default function Home() {
         query: mutations.createArtist,
         variables: { input: artistDetails },
       });
+
       console.log({ newArtist });
+
+      // refresh the artist list (could/should just do a subscription)
       fetchArtists();
     } catch (err) {
       console.error("createArtist err:", err);
@@ -109,6 +81,58 @@ export default function Home() {
     } catch (err) {
       console.error("findArtist error: ", err);
     }
+  };
+
+  const fetchUser = async () => {
+    let user = null;
+    try {
+      user = await Auth.currentAuthenticatedUser();
+    } catch (err) {
+      console.warn("fetchUser error: ", err);
+    }
+    setCurrentUser(user);
+  };
+
+  const signUp = async () => {
+    try {
+      const { user } = await Auth.signUp({
+        username,
+        password: "password",
+        attributes: {
+          email: `nicaroch+${Math.ceil(Math.random() * 1000)}@amazon.com`,
+          phone_number: "+16024108498", // optional - E.164 number convention
+        },
+      });
+      console.log({ user });
+    } catch (error) {
+      console.log("error signing up:", error);
+    }
+  };
+
+  const confirmSignUp = async () => {
+    try {
+      await Auth.confirmSignUp(username, code);
+    } catch (error) {
+      console.log("error confirming sign up", error);
+    }
+  };
+
+  const signIn = async () => {
+    try {
+      const user = await Auth.signIn(username, "password");
+      fetchUser();
+    } catch (error) {
+      console.log("error signing in", error);
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      await Auth.signOut();
+    } catch (err) {
+      console.error("signOut error: ", err);
+    }
+    fetchUser();
   };
 
   return (
@@ -154,38 +178,47 @@ export default function Home() {
           <button onClick={() => findArtist(artistQuery)}>Find &apos;em</button>
         </p>
 
-        <p className={styles.description}>
-          Sign up
-          <input
-            type="text"
-            name="username"
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Username"
-          />
-          <button onClick={signUp}>Sign Up</button>
-          Confirm sign up
-          <input
-            type="text"
-            name="username"
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Username"
-          />
-          <input
-            type="text"
-            name="code"
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="code"
-          />
-          <button onClick={confirmSignUp}>Confirm Sign Up</button>
-          Sign in
-          <input
-            type="text"
-            name="username"
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Username"
-          />
-          <button onClick={signIn}>Sign In</button>
-        </p>
+        {currentUser ? (
+          <>
+            <p className={styles.auth}>
+              Logged in as {currentUser.username}.
+              <button onClick={signOut}>Sign Out</button>
+            </p>
+          </>
+        ) : (
+          <p className={styles.auth}>
+            Sign up
+            <input
+              type="text"
+              name="username"
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username"
+            />
+            <button onClick={signUp}>Sign Up</button>
+            Confirm sign up
+            <input
+              type="text"
+              name="username"
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username"
+            />
+            <input
+              type="text"
+              name="code"
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="code"
+            />
+            <button onClick={confirmSignUp}>Confirm Sign Up</button>
+            Sign in
+            <input
+              type="text"
+              name="username"
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username"
+            />
+            <button onClick={signIn}>Sign In</button>
+          </p>
+        )}
       </main>
 
       <footer className={styles.footer}>

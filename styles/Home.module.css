@@ -51,9 +51,11 @@
 }
 
 .description {
-  margin: 4rem 0;
+  margin: 2rem 0;
   line-height: 1.5;
   font-size: 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .code {
@@ -106,6 +108,21 @@
 .logo {
   height: 1em;
   margin-left: 0.5rem;
+}
+
+.auth {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid grey;
+  border-radius: 15px;
+  padding: 1.5rem;
+  text-align: center;
+  text-transform: lowercase;
+  line-height: 2rem;
+}
+
+.auth button:not(:last-of-type) {
+  margin-bottom: 1rem;
 }
 
 .filteredArtist {
