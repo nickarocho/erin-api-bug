@@ -1,0 +1,19 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-erinapibug-dev-173303-authRole",
+      "UnauthRoleArn": "arn:aws:iam::947511734122:role/amplify-erinapibug-dev-173303-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::947511734122:role/amplify-erinapibug-dev-173303-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-erinapibug-dev-173303-deployment",
+      "UnauthRoleName": "amplify-erinapibug-dev-173303-unauthRole",
+      "StackName": "amplify-erinapibug-dev-173303",
+      "StackId": "arn:aws:cloudformation:us-west-2:947511734122:stack/amplify-erinapibug-dev-173303/0a8d3aa0-f743-11ec-b2a2-0286848e9259"
+    },
+    "categories": {
+      "auth": {
+        "erinapibug239fb09d": {}
+      }
+    }
+  }
+}
